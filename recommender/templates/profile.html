@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+
+                <!-- SUCCESS HEADER -->
+                <div class="bg-success text-white text-center p-4">
+                    <img src="{% static 'images/default-user.png' %}"
+                         class="rounded-circle border border-3 border-white shadow"
+                         width="110">
+
+                    <h4 class="mt-3 mb-1 fw-bold">
+                        {{ user.first_name }} {{ user.last_name }}
+                    </h4>
+
+                    <small>{{ user.email }}</small><br>
+                    <small>📞 {{ profile.phone }}</small>
+
+                    <div class="mt-3">
+                        <button class="btn btn-light btn-sm me-2"
+                                onclick="toggleEdit()">
+                            <i class="fa-solid fa-pen"></i> Edit
+                        </button>
+
+                        <a href="{% url 'logout' %}"
+                           class="btn btn-outline-light btn-sm">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </a>
+                    </div>
+                </div>
+
+                <!-- STATS -->
+                <div class="card-body p-4 text-center" id="viewSection">
+
+                    <div class="row">
+
+                        <div class="col-4">
+                            <h4 class="fw-bold text-primary">
+                                {{ total_predictions }}
+                            </h4>
+                            <small class="text-muted">
+                                Total Predictions
+                            </small>
+                        </div>
+
+                        <div class="col-4">
+                            <h4 class="fw-bold text-success">
+                                {{ saved_predictions }}
+                            </h4>
+                            <small class="text-muted">
+                                Saved Items
+                            </small>
+                        </div>
+
+                        <div class="col-4">
+                            <h4 class="fw-bold text-dark">
+                                {{ user.date_joined|date:"d M Y" }}
+                            </h4>
+                            <small class="text-muted">
+                                Joined
+                            </small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- EDIT FORM (Hidden) -->
+                <div class="card-body bg-light d-none" id="editSection">
+
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label">First Name</label>
+                                <input type="text"
+                                       name="first_name"
+                                       class="form-control"
+                                       value="{{ user.first_name }}">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Last Name</label>
+                                <input type="text"
+                                       name="last_name"
+                                       class="form-control"
+                                       value="{{ user.last_name }}">
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label">Phone</label>
+                                <input type="text"
+                                       name="phone"
+                                       class="form-control"
+                                       value="{{ profile.phone }}">
+                            </div>
+
+                        </div>
+
+                        <div class="mt-4 d-flex justify-content-between">
+                            <button type="submit"
+                                    class="btn btn-success px-4">
+                                Save Changes
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-secondary px-4"
+                                    onclick="toggleEdit()">
+                                Cancel
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+function toggleEdit() {
+    document.getElementById("viewSection").classList.toggle("d-none");
+    document.getElementById("editSection").classList.toggle("d-none");
+}
+</script>
+<footer class="footer-premium mt-4 bg-success text-white-100">
+    <div class="container">
+        <div class="row">
+            <div class="footer-bottom clip-text text-center small text-muted text-white-100 " style="te">
+               Copyright © 2026 Smart Crop Recommendation | Built with Django & ML
+            </div>
+        </div>
+</footer>
+
+{% endblock %}

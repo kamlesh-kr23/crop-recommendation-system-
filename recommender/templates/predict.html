@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Predict{% endblock %}
+
+{% block content %}
+<div class="row g-4 justify-content-center">
+
+    <div class="col-lg-8">
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3>
+                        <i class="fa-solid fa-flask me-2"></i>
+                        Crop Recommendation
+                    </h3>
+
+                    <div class="text-muted small d-none d-md-block">
+                        <i class="fa-solid fa-circle-info me-1"></i>
+                        Enter numeric values (Humidity 0-100, pH 0-14)
+                    </div>
+                </div>
+
+                <hr>
+
+                <form method="post" id="predictForm">
+                    {% csrf_token %}
+
+                    <div class="row g-3">
+                        {% for c in feature_order %}
+                        <div class="col-md-4">
+                            <label class="form-label text-uppercase">{{ c }}</label>
+                            <input 
+                                type="number"
+                                step="any"
+                                name="{{ c }}"
+                                id="id_{{ c|lower }}"
+                                class="form-control"
+                                required
+                            />
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mt-4 d-flex flex-wrap gap-2">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fa-solid fa-leaf me-1"></i>
+                            Predict Crop
+                        </button>
+
+                        <button type="button" class="btn btn-outline-secondary" onclick="fillRandomValues()">
+                            <i class="fa-solid fa-bolt me-1"></i>
+                            Simple
+                        </button>
+
+                        <button type="reset" class="btn btn-outline-danger">
+                            <i class="fa-solid fa-wand-magic-sparkles me-1"></i>
+                            Reset
+                        </button>    
+                    </div>
+                </form>
+
+                {% if result %}
+                <hr>
+                <div class="alert alert-success mt-3">
+                    Recommended Crop: <strong>{{ result|title }}</strong>
+                </div>
+                {% endif %}
+
+                {% if last_data %}
+                <hr>
+                <div class="small text-muted mt-2">
+                    <i class="fa-regular fa-clock"></i> Input Used:
+                    {% for k,v in last_data.items %}
+                    <code>{{ k }}={{ v }}</code>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <h5 class="mb-2">
+                <i class="fa-solid fa-lightbulb"></i> Tips
+            </h5>
+            <ul class="small text-muted mb-0">
+                <li>Use realistic local values for temperature, humidity & rainfall.</li>
+                <li>Soil pH valid range 0–14 (most crops prefer ~6–7).</li>
+                <li>Save multiple predictions and compare in your History.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mt-3">
+        <div class="card-body">
+            <h6 class="mb-2">
+                <i class="fa-solid fa-circle-question"></i> What is N-P-K?
+            </h6>
+            <p class="small text-muted mb-0">
+                N (Nitrogen), P (Phosphorus), K (Potassium) — key soil nutrients affecting crop growth.
+            </p>
+        </div>
+    </div>
+
+</div> <!-- Col 2 end -->
+
+
+</div>
+
+<!-- JavaScript for Random Values -->
+<script>
+function randomFloat(min, max, decimals=2) {
+    return (Math.random() * (max - min) + min).toFixed(decimals);
+}
+
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function fillRandomValues() {
+    document.getElementById('id_n').value = randomInt(0, 100);
+    document.getElementById('id_p').value = randomInt(0, 100);
+    document.getElementById('id_k').value = randomInt(0, 100);
+    document.getElementById('id_temperature').value = randomFloat(10, 40);
+    document.getElementById('id_humidity').value = randomFloat(20, 90);
+    document.getElementById('id_ph').value = randomFloat(4, 9);
+    document.getElementById('id_rainfall').value = randomFloat(0, 300);
+}
+</script>
+<footer class="footer-premium mt-4 bg-success text-white-100">
+    <div class="container">
+        <div class="row">
+            <div class="footer-bottom clip-text text-center small text-muted text-white-100 " style="te">
+              Copyright  © 2026 Smart Crop Recommendation | Built with Django & ML
+            </div>
+        </div>
+</footer>
+
+{% endblock %}
